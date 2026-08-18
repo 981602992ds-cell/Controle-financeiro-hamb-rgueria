@@ -1,0 +1,1016 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Controle de Custos · Hamburgueria</title>
+  <style>
+    :root {
+      --bg: #f5f7fa;
+      --surface: #ffffff;
+      --border: #e2e8f0;
+      --text: #1e293b;
+      --text-secondary: #64748b;
+      --primary: #2563eb;
+      --primary-hover: #1d4ed8;
+      --danger: #dc2626;
+      --success: #16a34a;
+      --warning: #d97706;
+      --radius: 12px;
+      --shadow: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.5;
+      padding-bottom: 70px;
+    }
+
+    header {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: 16px 20px;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      box-shadow: var(--shadow);
+    }
+
+    header h1 {
+      font-size: 1.25rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    header h1 svg {
+      width: 22px;
+      height: 22px;
+      stroke: var(--primary);
+    }
+
+    .tab-panel {
+      display: none;
+      padding: 20px;
+      animation: fadeIn 0.2s ease;
+    }
+
+    .tab-panel.active {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 16px;
+      margin-bottom: 16px;
+      box-shadow: var(--shadow);
+    }
+
+    .card-title {
+      font-size: 0.875rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+      color: var(--text-secondary);
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .grid-list {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 12px;
+    }
+
+    @media (min-width: 640px) {
+      .grid-list { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    .list-item {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 14px 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: var(--shadow);
+      transition: border-color 0.2s;
+    }
+
+    .list-item:hover { border-color: var(--primary); }
+
+    .item-info h3 {
+      font-size: 1rem;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+
+    .item-info p {
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+    }
+
+    .item-value {
+      font-weight: 600;
+      font-size: 0.95rem;
+      text-align: right;
+      white-space: nowrap;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 999px;
+      font-size: 0.7rem;
+      font-weight: 500;
+      background: #f1f5f9;
+      color: var(--text-secondary);
+      margin-left: 6px;
+    }
+
+    .badge-primary { background: #e0edff; color: var(--primary); }
+    .badge-success { background: #dcfce7; color: var(--success); }
+    .badge-warning { background: #fef3c7; color: var(--warning); }
+
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .form-row {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .form-group {
+      flex: 1;
+      min-width: 140px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    label {
+      font-size: 0.8rem;
+      font-weight: 500;
+      color: var(--text-secondary);
+    }
+
+    input, select {
+      padding: 10px 12px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-size: 0.9rem;
+      background: white;
+      transition: border-color 0.2s;
+      width: 100%;
+    }
+
+    input:focus, select:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(37,99,235,0.1);
+    }
+
+    button {
+      padding: 10px 16px;
+      background: var(--primary);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-weight: 500;
+      cursor: pointer;
+      font-size: 0.9rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: background 0.2s;
+      width: fit-content;
+    }
+
+    button:hover { background: var(--primary-hover); }
+    button.secondary {
+      background: #f1f5f9;
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+    button.secondary:hover { background: #e2e8f0; }
+    button.danger {
+      background: #fee2e2;
+      color: var(--danger);
+      border: 1px solid #fecaca;
+    }
+    button.danger:hover { background: #fecaca; }
+
+    .empty-state {
+      text-align: center;
+      padding: 30px 20px;
+      color: var(--text-secondary);
+      font-size: 0.9rem;
+    }
+
+    nav.tab-bar {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: var(--surface);
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-around;
+      padding: 8px 12px;
+      box-shadow: 0 -2px 10px rgba(0,0,0,0.04);
+      z-index: 100;
+    }
+
+    nav.tab-bar button {
+      background: transparent;
+      color: var(--text-secondary);
+      border: none;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      font-size: 0.7rem;
+      padding: 6px 12px;
+      border-radius: 8px;
+      transition: all 0.2s;
+    }
+
+    nav.tab-bar button.active {
+      color: var(--primary);
+      background: #eff6ff;
+    }
+
+    nav.tab-bar button svg {
+      width: 22px;
+      height: 22px;
+      stroke: currentColor;
+    }
+
+    .detail-header {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 16px;
+      margin-bottom: 20px;
+      box-shadow: var(--shadow);
+    }
+
+    .detail-header h2 {
+      font-size: 1.2rem;
+      margin-bottom: 8px;
+    }
+
+    .stat-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 6px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .stat-row:last-child { border-bottom: none; }
+    .stat-label { color: var(--text-secondary); font-size: 0.85rem; }
+    .stat-value { font-weight: 600; }
+
+    .progress-bar {
+      height: 8px;
+      background: #e2e8f0;
+      border-radius: 999px;
+      overflow: hidden;
+      margin-top: 6px;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: var(--success);
+      border-radius: 999px;
+      transition: width 0.3s;
+    }
+
+    .ficha-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 12px;
+      border-bottom: 1px solid var(--border);
+    }
+    .ficha-item:last-child { border-bottom: none; }
+
+    /* Modal de edição de insumo e produto */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0,0,0,0.4);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 200;
+    }
+    .modal {
+      background: white;
+      border-radius: var(--radius);
+      padding: 20px;
+      width: 90%;
+      max-width: 400px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+    }
+    .modal h3 {
+      margin-bottom: 16px;
+    }
+    .modal-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+      margin-top: 16px;
+    }
+
+    .unit-select {
+      max-width: 100px;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect>
+    </svg>
+    Controle de Custos · Hamburgueria
+  </h1>
+</header>
+
+<main>
+  <!-- TELA INSUMOS -->
+  <section id="tab-insumos" class="tab-panel active">
+    <div class="card">
+      <div class="card-title">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"></path><path d="m3.3 7 8.7 5 8.7-5"></path><path d="M12 22V12"></path></svg>
+        Cadastrar Novo Insumo
+      </div>
+      <form id="form-insumo">
+        <div class="form-row">
+          <div class="form-group">
+            <label>Nome do Insumo</label>
+            <input type="text" id="in-nome" placeholder="Carne Blend" required>
+          </div>
+          <div class="form-group">
+            <label>Categoria</label>
+            <select id="in-categoria">
+              <option>Proteínas</option>
+              <option>Pães</option>
+              <option>Laticínios</option>
+              <option>Molhos</option>
+              <option>Embalagens</option>
+              <option>Outros</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Unidade</label>
+            <select id="in-unidade">
+              <option value="g">g</option>
+              <option value="kg">kg</option>
+              <option value="ml">ml</option>
+              <option value="L">L</option>
+              <option value="un">un</option>
+              <option value="cx">cx</option>
+              <option value="fd">fd</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Preço do Pacote (R$)</label>
+            <input type="number" id="in-preco" step="0.01" min="0" placeholder="0.00" required>
+          </div>
+          <div class="form-group">
+            <label>Qtd. na Embalagem</label>
+            <input type="number" id="in-qtd" step="any" min="0.01" placeholder="1000" required>
+          </div>
+        </div>
+        <button type="submit">Adicionar Insumo</button>
+      </form>
+    </div>
+
+    <div class="card">
+      <div class="card-title">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line><line x1="3" y1="6" x2="3.01" y2="6"></line><line x1="3" y1="12" x2="3.01" y2="12"></line><line x1="3" y1="18" x2="3.01" y2="18"></line></svg>
+        Lista de Insumos
+      </div>
+      <div id="lista-insumos" class="grid-list"></div>
+    </div>
+  </section>
+
+  <!-- TELA CARDÁPIO -->
+  <section id="tab-produtos" class="tab-panel">
+    <div class="card">
+      <div class="card-title">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11h18v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2Z"></path><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+        Cadastrar Produto
+      </div>
+      <form id="form-produto">
+        <div class="form-row">
+          <div class="form-group">
+            <label>Nome do Hambúrguer</label>
+            <input type="text" id="pr-nome" placeholder="Cheeseburger Clássico" required>
+          </div>
+          <div class="form-group">
+            <label>Preço de Venda (R$)</label>
+            <input type="number" id="pr-preco" step="0.01" min="0" placeholder="25.00" required>
+          </div>
+        </div>
+        <button type="submit">Adicionar Produto</button>
+      </form>
+    </div>
+
+    <div class="card">
+      <div class="card-title">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 8h1a4 4 0 1 1 0 8h-1"></path><path d="M3 8h14v9a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4Z"></path><line x1="6" y1="2" x2="6" y2="4"></line><line x1="10" y1="2" x2="10" y2="4"></line><line x1="14" y1="2" x2="14" y2="4"></line></svg>
+        Cardápio
+      </div>
+      <div id="lista-produtos" class="grid-list"></div>
+    </div>
+  </section>
+
+  <!-- TELA DETALHES / FICHA TÉCNICA -->
+  <section id="tab-detalhes" class="tab-panel">
+    <div id="detalhe-container"></div>
+  </section>
+</main>
+
+<nav class="tab-bar">
+  <button data-tab="insumos" class="active">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"></path><path d="m3.3 7 8.7 5 8.7-5"></path><path d="M12 22V12"></path></svg>
+    Insumos
+  </button>
+  <button data-tab="produtos">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20h16"></path><path d="M6 16l6-12 6 12"></path><path d="M8 12h8"></path></svg>
+    Cardápio
+  </button>
+  <button data-tab="detalhes">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M12 16v-4"></path><path d="M12 8h.01"></path></svg>
+    Detalhes
+  </button>
+</nav>
+
+<!-- Modal para editar insumo -->
+<div id="modal-editar-insumo" class="modal-overlay" style="display:none;">
+  <div class="modal">
+    <h3>Editar Insumo</h3>
+    <form id="form-editar-insumo">
+      <input type="hidden" id="edit-id">
+      <div class="form-row">
+        <div class="form-group">
+          <label>Nome</label>
+          <input type="text" id="edit-nome" required>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Categoria</label>
+          <select id="edit-categoria">
+            <option>Proteínas</option>
+            <option>Pães</option>
+            <option>Laticínios</option>
+            <option>Molhos</option>
+            <option>Embalagens</option>
+            <option>Outros</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Unidade</label>
+          <select id="edit-unidade">
+            <option value="g">g</option>
+            <option value="kg">kg</option>
+            <option value="ml">ml</option>
+            <option value="L">L</option>
+            <option value="un">un</option>
+            <option value="cx">cx</option>
+            <option value="fd">fd</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Preço do Pacote (R$)</label>
+          <input type="number" id="edit-preco" step="0.01" min="0" required>
+        </div>
+        <div class="form-group">
+          <label>Qtd. na Embalagem</label>
+          <input type="number" id="edit-qtd" step="any" min="0.01" required>
+        </div>
+      </div>
+      <div class="modal-actions">
+        <button type="button" class="secondary" id="btn-cancelar-editar-insumo">Cancelar</button>
+        <button type="submit">Salvar</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Modal para editar produto -->
+<div id="modal-editar-produto" class="modal-overlay" style="display:none;">
+  <div class="modal">
+    <h3>Editar Produto</h3>
+    <form id="form-editar-produto">
+      <input type="hidden" id="edit-prod-id">
+      <div class="form-row">
+        <div class="form-group">
+          <label>Nome</label>
+          <input type="text" id="edit-prod-nome" required>
+        </div>
+        <div class="form-group">
+          <label>Preço de Venda (R$)</label>
+          <input type="number" id="edit-prod-preco" step="0.01" min="0" required>
+        </div>
+      </div>
+      <div class="modal-actions">
+        <button type="button" class="secondary" id="btn-cancelar-editar-produto">Cancelar</button>
+        <button type="submit">Salvar</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+  // ============ ESTADO ============
+  let insumos = JSON.parse(localStorage.getItem('insumos')) || [];
+  let produtos = JSON.parse(localStorage.getItem('produtos')) || [];
+  let fichas = JSON.parse(localStorage.getItem('fichas')) || [];
+  let currentProdutoId = null;
+
+  // Dados de exemplo na primeira execução
+  if (!insumos.length && !produtos.length && !fichas.length) {
+    insumos = [
+      { id: 'INS001', nome: 'Carne Blend 80/20', categoria: 'Proteínas', unidade: 'g', precoPacote: 25.90, qtdEmbalagem: 1000 },
+      { id: 'INS002', nome: 'Pão Brioche', categoria: 'Pães', unidade: 'un', precoPacote: 8.50, qtdEmbalagem: 6 },
+      { id: 'INS003', nome: 'Queijo Cheddar', categoria: 'Laticínios', unidade: 'g', precoPacote: 18.00, qtdEmbalagem: 500 },
+      { id: 'INS004', nome: 'Molho Especial', categoria: 'Molhos', unidade: 'ml', precoPacote: 12.00, qtdEmbalagem: 500 },
+      { id: 'INS005', nome: 'Caixa Delivery', categoria: 'Embalagens', unidade: 'un', precoPacote: 30.00, qtdEmbalagem: 25 },
+    ];
+    insumos.forEach(i => i.custoUnitario = +(i.precoPacote / i.qtdEmbalagem).toFixed(4));
+
+    produtos = [
+      { id: 'PROD001', nome: 'Cheeseburger Clássico', precoVenda: 28.90 },
+      { id: 'PROD002', nome: 'Bacon Burger', precoVenda: 32.90 },
+    ];
+
+    fichas = [
+      { id: 'FIC001', produtoId: 'PROD001', insumoId: 'INS001', qtdUtilizada: 150 },
+      { id: 'FIC002', produtoId: 'PROD001', insumoId: 'INS002', qtdUtilizada: 1 },
+      { id: 'FIC003', produtoId: 'PROD001', insumoId: 'INS003', qtdUtilizada: 40 },
+      { id: 'FIC004', produtoId: 'PROD001', insumoId: 'INS004', qtdUtilizada: 30 },
+      { id: 'FIC005', produtoId: 'PROD001', insumoId: 'INS005', qtdUtilizada: 1 },
+      { id: 'FIC006', produtoId: 'PROD002', insumoId: 'INS001', qtdUtilizada: 180 },
+      { id: 'FIC007', produtoId: 'PROD002', insumoId: 'INS002', qtdUtilizada: 1 },
+      { id: 'FIC008', produtoId: 'PROD002', insumoId: 'INS003', qtdUtilizada: 50 },
+      { id: 'FIC009', produtoId: 'PROD002', insumoId: 'INS005', qtdUtilizada: 1 },
+    ];
+    fichas.forEach(f => {
+      const insumo = insumos.find(i => i.id === f.insumoId);
+      f.subtotal = +(f.qtdUtilizada * insumo.custoUnitario).toFixed(4);
+    });
+    atualizarTotaisProdutos();
+    salvarDados();
+  }
+
+  // ============ FUNÇÕES AUXILIARES ============
+  function salvarDados() {
+    localStorage.setItem('insumos', JSON.stringify(insumos));
+    localStorage.setItem('produtos', JSON.stringify(produtos));
+    localStorage.setItem('fichas', JSON.stringify(fichas));
+  }
+
+  function formatarMoeda(valor) {
+    return 'R$ ' + Number(valor).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 4 });
+  }
+
+  function formatarPorcentagem(valor) {
+    return Number(valor).toFixed(1) + '%';
+  }
+
+  function getInsumo(id) {
+    return insumos.find(i => i.id === id);
+  }
+
+  function getProduto(id) {
+    return produtos.find(p => p.id === id);
+  }
+
+  function atualizarTotaisProdutos() {
+    produtos.forEach(p => {
+      const fichaDoProduto = fichas.filter(f => f.produtoId === p.id);
+      const custoTotal = fichaDoProduto.reduce((acc, f) => acc + f.subtotal, 0);
+      p.custoTotal = +custoTotal.toFixed(4);
+      p.lucroBruto = +(p.precoVenda - p.custoTotal).toFixed(2);
+      p.margem = p.precoVenda > 0 ? +((p.lucroBruto / p.precoVenda) * 100).toFixed(1) : 0;
+    });
+  }
+
+  function recalcularFichas() {
+    fichas.forEach(f => {
+      const insumo = getInsumo(f.insumoId);
+      f.subtotal = insumo ? +(f.qtdUtilizada * insumo.custoUnitario).toFixed(4) : 0;
+    });
+    atualizarTotaisProdutos();
+    salvarDados();
+  }
+
+  // Função para calcular subtotal considerando unidade (gramas/miligramas)
+  function calcularSubtotal(insumo, qtd, unidade) {
+    let quantidadeConvertida = qtd;
+    if (insumo.unidade === 'g' && unidade === 'Miligramas') {
+      quantidadeConvertida = qtd / 1000;
+    }
+    return +(quantidadeConvertida * insumo.custoUnitario).toFixed(4);
+  }
+
+  // ============ RENDERIZAÇÃO ============
+  function renderInsumos() {
+    const container = document.getElementById('lista-insumos');
+    if (!insumos.length) {
+      container.innerHTML = '<div class="empty-state">Nenhum insumo cadastrado.</div>';
+      return;
+    }
+    container.innerHTML = insumos.map(i => `
+      <div class="list-item">
+        <div class="item-info">
+          <h3>${i.nome} <span class="badge badge-primary">${i.categoria}</span></h3>
+          <p>${i.qtdEmbalagem} ${i.unidade} · custo por ${i.unidade}</p>
+        </div>
+        <div class="item-value">
+          ${formatarMoeda(i.custoUnitario)}
+          <div style="font-size:0.75rem; color:var(--text-secondary)">/ ${i.unidade}</div>
+          <div style="display:flex; gap:6px; margin-top:6px;">
+            <button class="secondary" onclick="abrirEditarInsumo('${i.id}')" style="padding:4px 8px; font-size:0.75rem;">Editar</button>
+            <button class="danger" onclick="removerInsumo('${i.id}')" style="padding:4px 8px; font-size:0.75rem;">Remover</button>
+          </div>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  function renderProdutos() {
+    const container = document.getElementById('lista-produtos');
+    if (!produtos.length) {
+      container.innerHTML = '<div class="empty-state">Nenhum produto cadastrado.</div>';
+      return;
+    }
+    container.innerHTML = produtos.map(p => `
+      <div class="list-item" style="cursor:pointer" onclick="abrirDetalhes('${p.id}')">
+        <div class="item-info">
+          <h3>${p.nome}</h3>
+          <p>Venda: ${formatarMoeda(p.precoVenda)}</p>
+          <p>Custo: ${formatarMoeda(p.custoTotal)}</p>
+        </div>
+        <div class="item-value">
+          <div>Lucro: ${formatarMoeda(p.lucroBruto)}</div>
+          <div class="badge ${p.margem > 30 ? 'badge-success' : p.margem > 15 ? 'badge-warning' : ''}">
+            ${formatarPorcentagem(p.margem)}
+          </div>
+          <div class="progress-bar" style="width:80px; margin-left:auto">
+            <div class="progress-fill" style="width:${Math.min(p.margem,100)}%"></div>
+          </div>
+          <div style="display:flex; gap:6px; margin-top:6px;">
+            <button class="secondary" onclick="event.stopPropagation(); abrirEditarProduto('${p.id}')" style="padding:4px 8px; font-size:0.75rem;">Editar</button>
+            <button class="danger" onclick="event.stopPropagation(); removerProduto('${p.id}')" style="padding:4px 8px; font-size:0.75rem;">Remover</button>
+          </div>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  function renderDetalhes() {
+    const container = document.getElementById('detalhe-container');
+    if (!currentProdutoId) {
+      container.innerHTML = '<div class="empty-state">Selecione um produto no cardápio para ver a ficha técnica.</div>';
+      return;
+    }
+    const produto = getProduto(currentProdutoId);
+    if (!produto) {
+      container.innerHTML = '<div class="empty-state">Produto não encontrado.</div>';
+      return;
+    }
+    const fichasDoProduto = fichas.filter(f => f.produtoId === produto.id);
+
+    container.innerHTML = `
+      <div class="detail-header">
+        <h2>${produto.nome}</h2>
+        <div class="stat-row">
+          <span class="stat-label">Preço de Venda</span>
+          <span class="stat-value">${formatarMoeda(produto.precoVenda)}</span>
+        </div>
+        <div class="stat-row">
+          <span class="stat-label">Custo Total de Produção</span>
+          <span class="stat-value">${formatarMoeda(produto.custoTotal)}</span>
+        </div>
+        <div class="stat-row">
+          <span class="stat-label">Lucro Bruto</span>
+          <span class="stat-value">${formatarMoeda(produto.lucroBruto)}</span>
+        </div>
+        <div class="stat-row">
+          <span class="stat-label">Margem de Lucro</span>
+          <span class="stat-value">${formatarPorcentagem(produto.margem)}</span>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14"></path><path d="M5 12h14"></path></svg>
+          Adicionar Ingrediente / Embalagem
+        </div>
+        <form id="form-ficha">
+          <div class="form-row">
+            <div class="form-group">
+              <label>Insumo</label>
+              <select id="fic-insumo" required>
+                ${insumos.map(i => `<option value="${i.id}">${i.nome}</option>`).join('')}
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Quantidade</label>
+              <input type="number" id="fic-qtd" step="any" min="0.01" placeholder="150" required>
+            </div>
+            <div class="form-group" id="fic-unidade-group" style="display:none;">
+              <label>Unidade</label>
+              <select id="fic-unidade">
+                <option value="Gramas">Gramas</option>
+                <option value="Miligramas">Miligramas</option>
+              </select>
+            </div>
+          </div>
+          <button type="submit">Adicionar à Ficha</button>
+        </form>
+      </div>
+
+      <div class="card">
+        <div class="card-title">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16v16H4z"></path><path d="M9 9h6v6H9z"></path></svg>
+          Componentes da Ficha
+        </div>
+        ${fichasDoProduto.length ? fichasDoProduto.map(f => {
+          const insumo = getInsumo(f.insumoId);
+          return `
+            <div class="ficha-item">
+              <div>
+                <strong>${insumo ? insumo.nome : 'Insumo removido'}</strong>
+                <div style="font-size:0.8rem; color:var(--text-secondary)">${f.qtdUtilizada} ${insumo ? insumo.unidade : ''} × ${formatarMoeda(insumo ? insumo.custoUnitario : 0)}</div>
+              </div>
+              <div style="display:flex; align-items:center; gap:8px;">
+                <span>${formatarMoeda(f.subtotal)}</span>
+                <button class="danger" onclick="removerFicha('${f.id}')" style="padding:4px 8px; font-size:0.75rem;">Remover</button>
+              </div>
+            </div>
+          `;
+        }).join('') : '<div class="empty-state">Nenhum ingrediente cadastrado.</div>'}
+        <div class="stat-row" style="margin-top:10px; border-top:2px solid var(--border); padding-top:10px;">
+          <span class="stat-label">Custo Total</span>
+          <span class="stat-value">${formatarMoeda(produto.custoTotal)}</span>
+        </div>
+      </div>
+    `;
+
+    // Mostrar/ocultar seletor de unidade conforme insumo selecionado
+    const insumoSelect = document.getElementById('fic-insumo');
+    const unidadeGroup = document.getElementById('fic-unidade-group');
+    insumoSelect.addEventListener('change', function() {
+      const insumo = getInsumo(this.value);
+      if (insumo && insumo.unidade === 'g') {
+        unidadeGroup.style.display = 'flex';
+      } else {
+        unidadeGroup.style.display = 'none';
+      }
+    });
+    insumoSelect.dispatchEvent(new Event('change'));
+
+    document.getElementById('form-ficha').addEventListener('submit', function(e) {
+      e.preventDefault();
+      const insumoId = document.getElementById('fic-insumo').value;
+      const qtd = parseFloat(document.getElementById('fic-qtd').value);
+      const unidade = document.getElementById('fic-unidade').value || 'Gramas';
+      adicionarFicha(produto.id, insumoId, qtd, unidade);
+    });
+  }
+
+  // ============ AÇÕES ============
+  function adicionarInsumo(nome, categoria, unidade, preco, qtd) {
+    const id = 'INS' + String(Date.now()).slice(-5);
+    const custoUnitario = qtd > 0 ? +(preco / qtd).toFixed(4) : 0;
+    insumos.push({ id, nome, categoria, unidade, precoPacote: preco, qtdEmbalagem: qtd, custoUnitario });
+    salvarDados();
+    renderInsumos();
+  }
+
+  function abrirEditarInsumo(id) {
+    const insumo = getInsumo(id);
+    if (!insumo) return;
+    document.getElementById('edit-id').value = insumo.id;
+    document.getElementById('edit-nome').value = insumo.nome;
+    document.getElementById('edit-categoria').value = insumo.categoria;
+    document.getElementById('edit-unidade').value = insumo.unidade;
+    document.getElementById('edit-preco').value = insumo.precoPacote;
+    document.getElementById('edit-qtd').value = insumo.qtdEmbalagem;
+    document.getElementById('modal-editar-insumo').style.display = 'flex';
+  }
+
+  function fecharEditarInsumo() {
+    document.getElementById('modal-editar-insumo').style.display = 'none';
+  }
+
+  function salvarEdicaoInsumo(e) {
+    e.preventDefault();
+    const id = document.getElementById('edit-id').value;
+    const insumo = getInsumo(id);
+    if (!insumo) return;
+
+    insumo.nome = document.getElementById('edit-nome').value.trim();
+    insumo.categoria = document.getElementById('edit-categoria').value;
+    insumo.unidade = document.getElementById('edit-unidade').value;
+    insumo.precoPacote = parseFloat(document.getElementById('edit-preco').value);
+    insumo.qtdEmbalagem = parseFloat(document.getElementById('edit-qtd').value);
+    insumo.custoUnitario = insumo.qtdEmbalagem > 0 ? +(insumo.precoPacote / insumo.qtdEmbalagem).toFixed(4) : 0;
+
+    fichas.forEach(f => {
+      if (f.insumoId === id) {
+        f.subtotal = calcularSubtotal(insumo, f.qtdUtilizada, f.unidade || 'Gramas');
+      }
+    });
+    atualizarTotaisProdutos();
+    salvarDados();
+    fecharEditarInsumo();
+    renderInsumos();
+    renderProdutos();
+    renderDetalhes();
+  }
+
+  function removerInsumo(id) {
+    const insumo = getInsumo(id);
+    if (!insumo) return;
+    const usadoEmFichas = fichas.some(f => f.insumoId === id);
+    const confirmacao = confirm(`Tem certeza que deseja remover "${insumo.nome}"?${usadoEmFichas ? ' As fichas que o utilizam também serão removidas.' : ''}`);
+    if (!confirmacao) return;
+
+    insumos = insumos.filter(i => i.id !== id);
+    fichas = fichas.filter(f => f.insumoId !== id);
+    atualizarTotaisProdutos();
+    salvarDados();
+    renderInsumos();
+    renderProdutos();
+    renderDetalhes();
+  }
+
+  function adicionarProduto(nome, preco) {
+    const id = 'PROD' + String(Date.now()).slice(-5);
+    produtos.push({ id, nome, precoVenda: preco, custoTotal: 0, lucroBruto: 0, margem: 0 });
+    atualizarTotaisProdutos();
+    salvarDados();
+    renderProdutos();
+  }
+
+  function abrirEditarProduto(id) {
+    const produto = getProduto(id);
+    if (!produto) return;
+    document.getElementById('edit-prod-id').value = produto.id;
+    document.getElementById('edit-prod-nome').value = produto.nome;
+    document.getElementById('edit-prod-preco').value = produto.precoVenda;
+    document.getElementById('modal-editar-produto').style.display = 'flex';
+  }
+
+  function fecharEditarProduto() {
+    document.getElementById('modal-editar-produto').style.display = 'none';
+  }
+
+  function salvarEdicaoProduto(e) {
+    e.preventDefault();
+    const id = document.getElementById('edit-prod-id').value;
+    const produto = getProduto(id);
+    if (!produto) return;
+
+    produto.nome = document.getElementById('edit-prod-nome').value.trim();
+    produto.precoVenda = parseFloat(document.getElementById('edit-prod-preco').value);
+
+    atualizarTotaisProdutos();
+    salvarDados();
+    fecharEditarProduto();
+    renderProdutos();
+    renderDetalhes(); // Se estiver na tela de detalhes, atualiza também
+  }
+
+  function removerProduto(id) {
+    const produto = getProduto(id);
+    if (!produto) return;
+    const confirmacao = confirm(`Tem certeza que deseja remover "${produto.nome}"? Todas as fichas associadas serão removidas.`);
+    if (!confirmacao) return;
+
+    produtos = produtos.filter(p => p.id !== id);
+    fichas = fichas.filter(f => f.produtoId !== id);
+    if (currentProdutoId === id) {
+      currentProdutoId = null; // Se estiver visualizando o produto removido, volta ao estado inicial
+    }
+    atualizarTotaisProdutos();
+    salvarDados();
+    renderProdutos();
+    renderDetalhes();
+  }
+
+  function adicionarFicha(produtoId, insumoId, qtd, unidade) {
+    const insumo = getInsumo(insumoId);
+    if (!insumo) return;
+    const subtotal = calcularSubtotal(insumo, qtd, unidade);
+    const id = 'FIC' + String(Date.now()).slice(-5);
+    fichas.push({ id, produtoId, insumoId, qtdUtilizada: qtd, unidade: unidade, subtotal });
+    atualizarTotaisProdutos();
+    salvarDados();
+    renderDetalhes();
+    renderProdutos();
+  }
+
+  function removerFicha(fichaId) {
+    fichas = fichas.filter(f => f.id !== fichaId);
+    atualizarTotaisProdutos();
+    salvarDados();
+    renderDetalhes();
+    renderProdutos();
+  }
+
+  function abrirDetalhes(produtoId) {
+    currentProdutoId = produtoId;
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    document.getElementById('tab-detalhes').classList.add('active');
+    document.querySelectorAll('.tab-bar button').forEach(b => b.classList.remove('active'));
+    document.querySelector('[data-tab="detalhes"]').classList.add('active');
+    renderDetalhes();
+  }
+
+  // ============ EVENTOS ============
+  document.getElementById('form-insumo').addEventListener('submit', function(e) {
+    e.preventDefault();
+    const nome = document.getElementById('in-nome').value.trim();
+    const categoria = document.getElementById('in-categoria').value;
+    const unidade = document.getElementById('in-unidade').value;
+    const preco = parseFloat(document.getElementById('in-preco').value);
+    const qtd = parseFloat(document.getElementById('in-qtd').value);
+    if (nome && preco >= 0 && qtd > 0) {
+      adicionarInsumo(nome, categoria, unidade, preco, qtd);
+      this.reset();
+    }
+  });
+
+  document.getElementById('form-produto').addEventListener('submit', function(e) {
+    e.preventDefault();
+    const nome = document.getElementById('pr-nome').value.trim();
+    const preco = parseFloat(document.getElementById('pr-preco').value);
+    if (nome && preco >= 0) {
+      adicionarProduto(nome, preco);
+      this.reset();
+    }
+  });
+
+  document.getElementById('form-editar-insumo').addEventListener('submit', salvarEdicaoInsumo);
+  document.getElementById('btn-cancelar-editar-insumo').addEventListener('click', fecharEditarInsumo);
+
+  document.getElementById('form-editar-produto').addEventListener('submit', salvarEdicaoProduto);
+  document.getElementById('btn-cancelar-editar-produto').addEventListener('click', fecharEditarProduto);
+
+  // Navegação por abas
+  document.querySelectorAll('.tab-bar button').forEach(btn => {
+    btn.addEventListener('click', function() {
+      const tab = this.dataset.tab;
+      document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+      document.getElementById('tab-' + tab).classList.add('active');
+      document.querySelectorAll('.tab-bar button').forEach(b => b.classList.remove('active'));
+      this.classList.add('active');
+      if (tab === 'detalhes') renderDetalhes();
+      if (tab === 'produtos') renderProdutos();
+      if (tab === 'insumos') renderInsumos();
+    });
+  });
+
+  // Inicialização
+  atualizarTotaisProdutos();
+  renderInsumos();
+  renderProdutos();
+  renderDetalhes();
+</script>
+</body>
+</html>
